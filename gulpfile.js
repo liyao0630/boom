@@ -1,4 +1,5 @@
 const gulp = require('gulp'),
+  clean = require('gulp-clean'),
   nodemon = require('gulp-nodemon'),
   bs = require('browser-sync').create(),
   tslint = require('gulp-tslint'),
@@ -7,16 +8,14 @@ const gulp = require('gulp'),
   sourcemaps = require('gulp-sourcemaps'),
   proxy = require('http-proxy-middleware');
 
-
-
 /**
  * Remove build directory.
  */
 gulp.task('clean', function () {
-  return gulp.src(outDir, {
-      read: false
-    })
-    .pipe(rimraf());
+  return gulp.src('build', {
+    read: false
+  })
+    .pipe(clean());
 });
 
 /**
@@ -33,9 +32,9 @@ gulp.task('tslint', () => {
 
 gulp.task('compile', () => {
   return gulp.src('src/**/*.ts')
-    .pipe(sourcemaps.init())
+    // .pipe(sourcemaps.init())
     .pipe(tsProject())
-    .pipe(sourcemaps.write('./'))
+    // .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('build/src/'));
 })
 
@@ -77,10 +76,10 @@ gulp.task('build', gulp.series('tslint', 'compile', 'configs', 'view', 'assets',
 gulp.task('nodemon', function nodemonCreate(done) {
   nodemon().on('start', function () {
     bs.reload();
+    done()
   }).on('quit', function () {
   }).on('restart', function (files) {
   });
-  done()
 })
 
 /**
@@ -91,10 +90,13 @@ gulp.task('bs', function bsDelay(done) {
   done()
 });
 
-gulp.task('watch', gulp.series('build', function watch(done) {
-  gulp.watch('src/**/*.ts', gulp.series('compile'))
+gulp.task('watch', function watch(done) {
+  gulp.watch('src/**/*.ts', gulp.series('tslint', 'compile'))
+  gulp.watch('assets/**/*.*', gulp.series('assets'))
+  gulp.watch('src/view/**/*.*', gulp.series('view'))
+  gulp.watch(['src/config/**/*.yml', 'src/config/**/*.json'], gulp.series('configs'))
   done()
-}))
+})
 
 /**
  * Start the service
@@ -118,6 +120,6 @@ gulp.task('server', gulp.series('nodemon', function browserSync(done) {
   done()
 }))
 
-gulp.task('dev', gulp.series('build', 'server', 'watch', function(done) {
+gulp.task('dev', gulp.series('build', 'server', 'watch', function (done) {
   done()
 }))

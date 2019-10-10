@@ -23,14 +23,14 @@ interface RenderData {
   js?: string[]
 }
 
-export default class Boom extends Request {
+export default class Boom {
   public options: Options
   public layoutTemplate: string
   public getRouter: Map<string, any>
   public postRouter: Map<string, any>
+  public chain: Function[]
 
   constructor(options?) {
-    super()
     let defaultOptions = {
       prot: 9530,
       host: 'localhost',
@@ -66,7 +66,6 @@ export default class Boom extends Request {
         let method = req.method
         let result: any = ''
         req['boom'] = {}
-        this.cookieParse(req)
         if (method === 'GET') {
           if (this.getRouter.has(currentUrl)) {
             let data: RenderData = this.getRouter.get(currentUrl)(req, res)
@@ -83,8 +82,8 @@ export default class Boom extends Request {
         if (this.isAssets(currentUrl)) {
           result = assets.get(currentUrl)
         }
-// IncomingMessage
-        if (!result) {
+
+        if (result === undefined) {
           return
         }
 

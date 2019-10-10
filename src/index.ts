@@ -3,7 +3,7 @@ import Boom from './lib/boom'
 const boom = new Boom()
 boom.get('/', (req, res) => {
   // res.end(JSON.stringify(req.boom.cookie))
-  return {title: '12'}
+  return {title: '123'}
 })
 
 boom.post('/list', (req, res) => {
