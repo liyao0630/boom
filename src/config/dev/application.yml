@@ -1,0 +1,16 @@
+web:
+  app:
+    port: 3030
+    host: localhost
+    assets: assets
+  cache:
+    maxCacheSize: 104857600
+    expire: 60000
+  mysql:
+    -
+      name: local
+      host: localhost
+      user: root
+      password: '123123'
+      database: test
+      connectionLimit: 20

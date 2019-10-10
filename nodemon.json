@@ -1,0 +1,7 @@
+{
+  "script": "./build/src/index.js",
+  "ext": "js html css",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
